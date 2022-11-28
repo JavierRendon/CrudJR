@@ -10,12 +10,12 @@ import CoreData
 struct PersistenceController {
     static let shared = PersistenceController()
 
-    /*static var preview: PersistenceController = {
+    static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
         for _ in 0..<10 {
             let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            // newItem.timestamp = Date()
         }
         do {
             try viewContext.save()
@@ -26,9 +26,9 @@ struct PersistenceController {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
         return result
-    }()*/
+    }()
 
-    /*let container: NSPersistentContainer
+    let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "CrudJR")
@@ -51,5 +51,5 @@ struct PersistenceController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
-    }*/
+    }
 }
