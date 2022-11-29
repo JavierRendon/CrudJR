@@ -9,85 +9,86 @@ import Foundation
 import CoreData
 
 class CoreDataManager{
-    let persistentContainer : NSPersistentContainer
-    
+    let persistentContainer: NSPersistentContainer
+
     init(){
-        persistentContainer = NSPersistentContainer(name: "Pedido")
+        persistentContainer = NSPersistentContainer(name: "CrudJR")
         persistentContainer.loadPersistentStores(completionHandler:{
-            (description, error) in
-            if let error = error{
-                fatalError("Core data failed\(error.localizedDescription)")
+            (descripcion, error) in
+            if let error = error {
+                fatalError("Core data fallo \(error.localizedDescription)")
             }
-            
         })
     }
-    func guardarPedido(idPedido :String, cliente:String, articulo:String, fechaEntrega:String, direccion:String, total:String, estado:String ){
+
+    func guardarPedidos(idPedido: String, cliente: String, articulo: String, fechaEntrega: String, direccion: String, total: String, estado: String){
         let pedido = Pedido(context: persistentContainer.viewContext)
-    pedido.idPedido = idPedido
-    pedido.cliente = cliente
-    pedido.articulo = articulo
-    pedido.fechaEntrega = fechaEntrega
-    pedido.direccion = direccion
-    pedido.total = total
-    pedido.estado = estado
+        pedido.idPedido = idPedido
+        pedido.cliente = cliente
+        pedido.articulo =  articulo
+        pedido.fechaEntrega = fechaEntrega
+        pedido.direccion = direccion
+        pedido.total = total
+        pedido.estado = estado
         
         do{
             try persistentContainer.viewContext.save()
-            print("Pedido guardado")
+            print("Guardado")
         }
         catch{
-            print ("Fallo al guardar el pedido")
+            print("Fallo al guardar")
         }
     }
-    
-    func leerPedidos() -> [Pedido] {
-        let fetchRequest : NSFetchRequest<Pedido> = Pedido.fetchRequest()
+
+    func leerTodosLosPedidos() -> [Pedido]{
+        let fetchRequest: NSFetchRequest<Pedido> = Pedido.fetchRequest()
+
         do{
             return try persistentContainer.viewContext.fetch(fetchRequest)
         }
         catch{
-            return[]
+            return []
         }
     }
-    
-    func leerPedido(idPedido:String) -> Pedido?{
-        let fetchRequest : NSFetchRequest<Pedido> = Pedido.fetchRequest()
-        let predicate = NSPredicate(format: "idPedido = %@", idPedido)
-        fetchRequest.predicate = predicate
-        
+
+    func borrarPedidos(pedido: Pedido){
+        persistentContainer.viewContext.delete(pedido)
+
         do{
-            let datos = try persistentContainer.viewContext.fetch(fetchRequest)
-            return datos.first
-            }
-        catch{
-            print("¡Error! No se puede leer ese dato")
+            try persistentContainer.viewContext.save()
+        }catch{
+            persistentContainer.viewContext.rollback()
+            print("Fallo al guardar")
         }
-        return nil
     }
-    
-    func actualizarPedido(pedido: Pedido){
-        let fetchRequest : NSFetchRequest<Pedido> = Pedido.fetchRequest()
+
+    func actualizarPedidos(pedido: Pedido){
+        let fetchRequest: NSFetchRequest<Pedido> = Pedido.fetchRequest()
         let predicate = NSPredicate(format: "idPedido = %@", pedido.idPedido ?? "")
         fetchRequest.predicate = predicate
-        
+
+
         do{
             let datos = try persistentContainer.viewContext.fetch(fetchRequest)
             let p = datos.first
             p?.idPedido = pedido.idPedido
-            p?.cliente = pedido.cliente
-            p?.articulo = pedido.articulo
-        p?.fechaEntrega = pedido.fechaEntrega
-            p?.direccion = pedido.direccion
-            p?.total = pedido.total
-        p?.estado = pedido.estado
             try persistentContainer.viewContext.save()
             print("Pedido Actualizado")
         }catch{
-            print("¡Error! Fallo al actualizar el pedido")
+            print("failed to save error en \(error)")
         }
     }
-    
-    func borraPedido(pedido:Pedido){
-        persistentContainer.viewContext.delete(pedido)
+
+    func leerPedidos(idPedido: String) -> Pedido?{
+        let fetchRequest: NSFetchRequest<Pedido> = Pedido.fetchRequest()
+        let predicate = NSPredicate(format: "idPedido = %@", idPedido)
+        fetchRequest.predicate = predicate
+        do{
+            let datos = try persistentContainer.viewContext.fetch(fetchRequest)
+            return datos.first
+        }catch{
+            print("failed to save error en \(error)")
+        }
+        return nil
     }
 }

@@ -9,12 +9,10 @@ import SwiftUI
 
 @main
 struct CrudJRApp: App {
-    //let persistenceController = PersistenceController.shared
-
+    let coreDM = CoreDataManager()
     var body: some Scene {
         WindowGroup {
-            ContentView(coreDM: CoreDataManager() )
-                //.environment(\.managedObjectContext, persistenceController.container.viewContext)
+            ContentView(coreDM: coreDM)
         }
     }
 }

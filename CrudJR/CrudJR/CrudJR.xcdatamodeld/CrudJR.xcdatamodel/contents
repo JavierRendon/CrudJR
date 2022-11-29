@@ -7,9 +7,16 @@
         <attribute name="estado" optional="YES" attributeType="String"/>
         <attribute name="fechaEntrega" optional="YES" attributeType="String"/>
         <attribute name="idPedido" optional="YES" attributeType="String"/>
+        <attribute name="newarticulo" optional="YES" attributeType="String"/>
+        <attribute name="newcliente" optional="YES" attributeType="String"/>
+        <attribute name="newdireccion" optional="YES" attributeType="String"/>
+        <attribute name="newestado" optional="YES" attributeType="String"/>
+        <attribute name="newfechaEntrega" optional="YES" attributeType="String"/>
+        <attribute name="newidPedido" optional="YES" attributeType="String"/>
+        <attribute name="newtotal" optional="YES" attributeType="String"/>
         <attribute name="total" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Pedido" positionX="-63" positionY="-18" width="128" height="134"/>
+        <element name="Pedido" positionX="-63" positionY="-18" width="128" height="239"/>
     </elements>
 </model>

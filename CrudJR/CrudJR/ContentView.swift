@@ -9,7 +9,6 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
-    
     let coreDM: CoreDataManager
     @State var idPedido = ""
     @State var cliente = ""
@@ -18,97 +17,126 @@ struct ContentView: View {
     @State var direccion = ""
     @State var total = ""
     @State var estado = ""
-    @State var seleccionado:Pedido?
-    @State var pedidoArray = [Pedido]()
-    
-    var body: some View{
-        VStack{
-            TextField("Id del Pedido", text: $idPedido)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            TextField("Cliente del Pedido", text: $cliente)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            TextField("Articulo del Pedido", text: $articulo)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            TextField("Fecha de Entrega del Pedido", text: $fechaEntrega)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            TextField("Direccion del Pedido", text: $direccion)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        TextField("Total del Pedido", text: $total)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        TextField("Estado del Pedido", text: $estado)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            Button("SAVE"){
-                
-                if (seleccionado != nil){
-                    seleccionado?.idPedido = idPedido
-                    seleccionado?.cliente = cliente
-                    seleccionado?.articulo = articulo
-                    seleccionado?.fechaEntrega = fechaEntrega
-                    seleccionado?.direccion = direccion
-            seleccionado?.total = total
-            seleccionado?.estado = estado
-                    coreDM.actualizarPedido(pedido: seleccionado!)
-                }else{
-                    coreDM.guardarPedido(idPedido: idPedido, cliente: cliente, articulo: articulo, fechaEntrega: fechaEntrega, direccion: direccion, total: total, estado: estado)
-                }
-                mostrarPedidos()
-                idPedido = ""
-                cliente = ""
-                articulo = ""
-                fechaEntrega = ""
-                direccion = ""
-        total = ""
-        estado = ""
-                seleccionado = nil
-            }
-            List{
-                ForEach(pedidoArray, id: \.self){
-                ped in
-                VStack{
-                    Text(ped.idPedido ?? "")
-                    Text(ped.cliente ?? "")
-                    Text(ped.articulo ?? "")
-                    Text(ped.fechaEntrega ?? "")
-                    Text(ped.direccion ?? "")
-            Text(ped.total ?? "")
-            Text(ped.estado ?? "")
-                }
-                .onTapGesture {
-                    seleccionado = ped
-                    idPedido = ped.idPedido ?? ""
-            cliente = ped.cliente ?? ""
-            articulo = ped.articulo ?? ""
-            fechaEntrega = ped.fechaEntrega ?? ""
-                    direccion = ped.direccion ?? ""
-                    total = ped.total ?? ""
-                    estado = ped.estado ?? ""
-                }
-            }
-            .onDelete(perform: {
-                indexSet in
-                indexSet.forEach({index in
-                    let pedido = pedidoArray[index]
-                    coreDM.borraPedido(pedido: pedido)
-                    mostrarPedidos()
-                })
-            })
-        }
-        Spacer()
-    }.padding()
-        .onAppear(perform: {
-            mostrarPedidos()
-        })
-        
-    }
+    @State var newidPedido = ""
+    @State var newcliente = ""
+    @State var newarticulo = ""
+    @State var newfechaEntrega = ""
+    @State var newdireccion = ""
+    @State var newtotal = ""
+    @State var newestado = ""
+    @State var seleccionado: Pedido?
+    @State var prodArray = [Pedido]()
+    @State var isTapped = false
 
-    func mostrarPedidos(){
-        pedidoArray = coreDM.leerPedidos()
+
+    var body: some View {
+        NavigationView{
+            VStack{
+                NavigationLink(destination: VStack{
+                    TextField("Pedido ID", text: self.$newidPedido)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Cliente", text: self.$newcliente)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Articulo", text: self.$newarticulo)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Fecha de Entrega", text: self.$newfechaEntrega)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Direccion", text: self.$newdireccion)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Total", text: self.$newtotal)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Estado" , text: self.$newestado)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    Button("Guardar"){
+                        coreDM.guardarPedidos(idPedido: newidPedido, cliente: newcliente, articulo: newarticulo, fechaEntrega: newfechaEntrega, direccion: newdireccion, total: newtotal, estado: newestado)
+                        newidPedido = ""
+                        newcliente = ""
+                        newarticulo = ""
+                        newfechaEntrega = ""
+                        newdireccion = ""
+                        newtotal = ""
+                        newestado = ""
+                        mostrarPedidos()
+                    }
+                }.padding()){
+                    Text("Agregar")
+                }
+                
+                List{
+                    ForEach(prodArray, id: \.self){
+                        prod in
+                        VStack{
+                            Text(prod.cliente ?? "")
+                        }
+                        .onTapGesture{
+                            seleccionado = prod
+                            idPedido = prod.idPedido ?? ""
+                            cliente = prod.cliente ?? ""
+                            articulo = prod.articulo ?? ""
+                            fechaEntrega = prod.fechaEntrega ?? ""
+                            direccion = prod.direccion ?? ""
+                            total = prod.total ?? ""
+                            estado = prod.estado ?? ""
+                            isTapped.toggle()
+                        }
+                    }.onDelete(perform: {
+                        indexSet in
+                        indexSet.forEach({ index in
+                        let pedido = prodArray[index]
+                            coreDM.borrarPedidos(pedido: pedido)
+                        mostrarPedidos()
+                        })
+                    })
+                }.padding()
+                    .onAppear(perform: {mostrarPedidos()})
+                
+                NavigationLink("",destination: VStack{
+                    TextField("Pedido ID", text: self.$idPedido)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Cliente", text: self.$cliente)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Articulo", text: self.$articulo)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Fecha de Entrega", text: self.$fechaEntrega)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Direccion", text: self.$direccion)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Total", text: self.$total)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("Estado" , text: self.$estado)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    Button("Actualizar"){
+                        seleccionado?.idPedido = idPedido
+                        seleccionado?.cliente = cliente
+                        seleccionado?.articulo = articulo
+                        seleccionado?.fechaEntrega = fechaEntrega
+                        seleccionado?.direccion = direccion
+                        seleccionado?.total = total
+                        seleccionado?.estado = estado
+                        coreDM.actualizarPedidos(pedido: seleccionado!)
+                        idPedido = ""
+                        cliente = ""
+                        articulo = ""
+                        fechaEntrega = ""
+                        direccion = ""
+                        total = ""
+                        estado = ""
+                        mostrarPedidos()
+                    }
+                }.padding(), isActive: $isTapped)
+                    
+            }
+        }
     }
+    func mostrarPedidos(){
+            prodArray = coreDM.leerTodosLosPedidos()
+        }
 }
 
-
-struct ContentView_preViews: PreviewProvider{
-    static var previews: some View{
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
         ContentView(coreDM: CoreDataManager())
     }
 }
